@@ -35,7 +35,9 @@ const LEVELS = [
 ];
 const DB_MIN = 30, DB_MAX = 120;
 const DB_OFFSET = 105;      // dBFS (0 = микийн дээд хязгаар) → харагдах "dB" руу хувиргах
-const WINDOW_MS = 500;      // оноо = 0.5 сек дундаж түвшний хамгийн өндөр утга
+// ОНОО = хэмжих хугацааны dB-ийн ДУНДАЖ (ганц чанга хашгираа дүнг хөөрөгдөхгүй).
+// Эхний 0.5 секундийг алгасна — "АЛГА ТАШ!" гарахад үзэгчдэд хариу үйлдэл хийх хугацаа.
+const REACTION_MS = 500;
 const FILTERS = [
   { key: 'mugshot', label: '🔎 MUGSHOT' },
   { key: 'night', label: '🟢 ШӨНИЙН ХАРАА' },
@@ -597,7 +599,7 @@ function drawFiltered(ctx, video, key, meta) {
 /* ================================================================
    9. ТАЙЗ — хэмжилт
    ================================================================ */
-let measure = null;   // { id, phase: 'idle'|'countdown'|'measuring'|'done', start, samples, best, peak }
+let measure = null;   // { id, phase: 'idle'|'countdown'|'measuring'|'done', start, lastT, dbSum, dur, peak }
 const meterState = { disp: DB_MIN, last: 0 };
 
 function meterHTML() {
@@ -618,7 +620,7 @@ function renderStage(id, remeasure = false) {
   view = 'stage';
   const list = byCat(p.cat);
   const idx = list.indexOf(p) + 1;
-  measure = { id, phase: p.score != null && !remeasure ? 'done' : 'idle', start: 0, samples: [], best: -Infinity, peak: -Infinity };
+  measure = { id, phase: p.score != null && !remeasure ? 'done' : 'idle', start: 0, lastT: 0, dbSum: 0, dur: 0, peak: -Infinity };
 
   swap(`
     <div class="stage-head">
@@ -723,7 +725,7 @@ async function startMeasure() {
   await wait(350);                       // дохионы дуу бүрэн унтрахыг хүлээнэ
   if (!measure || measure.id !== id) { ov.remove(); return; }
   setTimeout(() => ov.remove(), 700);
-  Object.assign(measure, { phase: 'measuring', start: performance.now(), samples: [], best: -Infinity, peak: -Infinity });
+  Object.assign(measure, { phase: 'measuring', start: performance.now(), lastT: 0, dbSum: 0, dur: 0, peak: -Infinity });
   $('#m-status').textContent = '🔴 ХЭМЖИЖ БАЙНА… (чимээгүй горим)';
   $('#m-bar').classList.add('on');
 }
@@ -733,9 +735,10 @@ function finishMeasure() {
   measure.phase = 'done';
   $('#m-bar')?.classList.remove('on');
   if (!p) return;
-  const best = Number.isFinite(measure.best) ? measure.best : measure.peak;
-  p.score = r1(best);
-  p.peak = r1(Math.max(measure.peak, best));
+  // Хугацаагаар жигнэсэн dB-ийн дундаж (кадр бүр ижил жинтэй байхын тулд)
+  const avg = measure.dur > 0 ? measure.dbSum / measure.dur : measure.peak;
+  p.score = r1(avg);
+  p.peak = r1(Math.max(measure.peak, avg));
   savePeople();
   setTimeout(() => sfx.result(), 150);   // хэмжилт дууссаны ДАРАА л дуу
   drawStageUI();
@@ -753,14 +756,15 @@ function loop(ts) {
   meterState.disp = db > meterState.disp ? db : Math.max(db, meterState.disp - 35 * dt);
 
   if (measure && measure.phase === 'measuring') {
-    const t = performance.now() - measure.start;
-    measure.samples.push({ t, p });
-    while (measure.samples.length && measure.samples[0].t < t - WINDOW_MS) measure.samples.shift();
-    if (t >= WINDOW_MS) {
-      const avg = measure.samples.reduce((s, x) => s + x.p, 0) / measure.samples.length;
-      measure.best = Math.max(measure.best, toDb(avg));
+    const t = Math.min(performance.now() - measure.start, CFG.measureSec * 1000);
+    // Эхний 0.5 сек-ээс хойшхи dB-г хугацааны жингээр нэмж дундажлана
+    if (t > REACTION_MS) {
+      const from = Math.max(measure.lastT, REACTION_MS);
+      const w = t - from;
+      if (w > 0) { measure.dbSum += db * w; measure.dur += w; }
     }
-    measure.peak = Math.max(measure.peak, db);
+    measure.lastT = t;
+    measure.peak = Math.max(measure.peak, db);   // оргил цэг: зөвхөн харуулах + тэнцсэн үед ялгах
     const bar = $('#m-bar i');
     if (bar) bar.style.width = clamp(t / (CFG.measureSec * 1000), 0, 1) * 100 + '%';
     if (t >= CFG.measureSec * 1000) finishMeasure();
