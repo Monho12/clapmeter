@@ -1,14 +1,14 @@
 'use strict';
 /* ================================================================
-   👏 CLAP METER — EmpaSoft · Night of the Bugs · Костюмын шагнал
+   CLAP METER — EmpaSoft · Night of the Bugs · Костюмын шагнал
    ----------------------------------------------------------------
    Финалист бүрийг (эрэгтэй 3 + эмэгтэй 3) тайзан дээр гаргаж,
    үзэгчдийн алга ташилт/хашгирааг laptop-ын микрофоноор хэмжиж
    1-2-3-р байрыг тодруулна.
 
-   ⚠ "dB" нь ХАРЬЦАНГУЙ түвшин (мэргэжлийн dB метр биш). Нэг мик,
+   "dB" нь ХАРЬЦАНГУЙ түвшин (мэргэжлийн dB метр биш). Нэг мик,
      нэг байрлал ашиглавал оролцогчдыг харьцуулахад шударга.
-   🔒 Нэр, зураг, оноо зөвхөн энэ хөтөч дотор (localStorage) хадгалагдана.
+   Нэр, зураг, оноо зөвхөн энэ хөтөч дотор (localStorage) хадгалагдана.
    ================================================================ */
 
 /* ================================================================
@@ -22,8 +22,8 @@ const DEFAULTS = {
   pin: '1031',       // зохион байгуулагчийн PIN
 };
 const CATS = {
-  m: { label: 'ЭРЭГТЭЙ', icon: '🎩' },
-  f: { label: 'ЭМЭГТЭЙ', icon: '👠' },
+  m: { label: 'ЭРЭГТЭЙ', icon: '' },
+  f: { label: 'ЭМЭГТЭЙ', icon: '' },
 };
 // Метрийн түвшнүүд (харьцангуй dB)
 const LEVELS = [
@@ -31,7 +31,7 @@ const LEVELS = [
   { from: 55, name: 'ЧИМЭЭ' },
   { from: 70, name: 'ХАШГИРАА' },
   { from: 85, name: 'ТАЙЗ ДОРГИЛОО' },
-  { from: 100, name: 'ЧӨТГӨР СЭРЛЭЭ 💀' },
+  { from: 100, name: 'ЧӨТГӨР СЭРЛЭЭ ' },
 ];
 const DB_MIN = 30, DB_MAX = 120;
 const DB_OFFSET = 105;      // dBFS (0 = микийн дээд хязгаар) → харагдах "dB" руу хувиргах
@@ -39,11 +39,11 @@ const DB_OFFSET = 105;      // dBFS (0 = микийн дээд хязгаар) �
 // Эхний 0.5 секундийг алгасна — "АЛГА ТАШ!" гарахад үзэгчдэд хариу үйлдэл хийх хугацаа.
 const REACTION_MS = 500;
 const FILTERS = [
-  { key: 'mugshot', label: '🔎 MUGSHOT' },
-  { key: 'night', label: '🟢 ШӨНИЙН ХАРАА' },
-  { key: 'thermal', label: '🔴 ДУЛААНЫ КАМЕР' },
-  { key: 'vhs', label: '📼 VHS' },
-  { key: 'noir', label: '⚫ НУАР' },
+  { key: 'mugshot', label: 'MUGSHOT' },
+  { key: 'night', label: 'ШӨНИЙН ХАРАА' },
+  { key: 'thermal', label: 'ДУЛААНЫ КАМЕР' },
+  { key: 'vhs', label: 'VHS' },
+  { key: 'noir', label: 'НУАР' },
 ];
 const PHOTO_W = 360, PHOTO_H = 480;   // хадгалах зургийн хэмжээ (3:4)
 const EVENT_DATE = '2026.10.31';
@@ -73,7 +73,7 @@ const saveCfg = () => store.set(KEYS.cfg, CFG);
 const saveRevealed = () => store.set(KEYS.revealed, revealed);
 function savePeople() {
   if (!store.set(KEYS.people, people)) {
-    flash('⚠ ХАДГАЛАХ ЗАЙ ДҮҮРЛЭЭ', 2000);
+    flash('ХАДГАЛАХ ЗАЙ ДҮҮРЛЭЭ', 2000);
     return false;
   }
   return true;
@@ -103,10 +103,10 @@ function ranked(cat) {
   });
   return list;
 }
-const medal = (place) => ({ 1: '🥇', 2: '🥈', 3: '🥉' }[place] || place + '.');
+const medal = (place) => place + '.';
 
 /* ================================================================
-   4. ДУУ (WebAudio). ⚠ Хэмжих үед ямар ч дуу гаргахгүй!
+   4. ДУУ (WebAudio). Хэмжих үед ямар ч дуу гаргахгүй!
    ================================================================ */
 let audioCtx = null;
 function getCtx() {
@@ -168,7 +168,7 @@ const mic = {
       this.an = ctx.createAnalyser();
       this.an.fftSize = 2048;
       this.buf = new Float32Array(this.an.fftSize);
-      src.connect(this.an); // ⚠ чанга яригч руу холбохгүй (feedback үүснэ)
+      src.connect(this.an); // чанга яригч руу холбохгүй (feedback үүснэ)
       this.ready = true;
       return true;
     } catch (e) {
@@ -223,13 +223,14 @@ function flash(text, ms = 1400) {
 function rainParticles() {
   const box = $('#particles');
   box.innerHTML = '';
-  const icons = ['🎃', '👻', '🦇', '💀', '🕸️', '✨', '👏'];
+  const colors = ['#ff7a1a', '#39ff7a', '#ffd34d', '#ff3355', '#e8e2d0']; // конфетти өнгө
   const count = window.innerWidth < 600 ? 24 : 46;
   for (let k = 0; k < count; k++) {
     const s = document.createElement('span');
-    s.textContent = icons[k % icons.length];
+    s.style.background = colors[k % colors.length];
     s.style.left = Math.random() * 100 + 'vw';
-    s.style.fontSize = (1.4 + Math.random() * 2) + 'rem';
+    s.style.width = (6 + Math.random() * 8) + 'px';
+    s.style.height = (10 + Math.random() * 16) + 'px';
     s.style.animationDuration = (3 + Math.random() * 3.5) + 's';
     s.style.animationDelay = (Math.random() * 2.5) + 's';
     box.appendChild(s);
@@ -245,8 +246,8 @@ function header(sub) {
         <div class="case-line">ХЭРГИЙН ДУГААР <b>10/31-HW</b> · ${esc(sub)}</div>
       </div>
       <div class="btn-row">
-        <button class="btn btn-small" data-nav="home">🏠 НҮҮР</button>
-        <button class="btn btn-small" data-nav="board">🏆 ТЭРГҮҮЛЭГЧИД</button>
+        <button class="btn btn-small" data-nav="home">НҮҮР</button>
+        <button class="btn btn-small" data-nav="board">ТЭРГҮҮЛЭГЧИД</button>
       </div>
     </div>`;
 }
@@ -272,7 +273,7 @@ function renderHome() {
         <div>
           <div class="slot-no">${caseNo(p.no)}</div>
           <div class="slot-name">${esc(p.name)}</div>
-          ${p.costume ? `<div class="slot-costume">🎭 ${esc(p.costume)}</div>` : ''}
+          ${p.costume ? `<div class="slot-costume">${esc(p.costume)}</div>` : ''}
         </div>
         <div class="slot-score">
           ${p.score != null ? `<b>${p.score.toFixed(1)} dB</b>` : '<span class="pending">— хэмжээгүй</span>'}
@@ -280,7 +281,7 @@ function renderHome() {
             ${p.score == null
               ? `<button class="btn btn-small btn-primary" data-measure="${p.id}">▶ ХЭМЖИХ</button>`
               : `<button class="btn btn-small lock" data-measure="${p.id}">↺</button>`}
-            <button class="btn btn-small btn-danger lock" data-del="${p.id}" title="Устгах">🗑</button>
+            <button class="btn btn-small btn-danger lock" data-del="${p.id}" title="Устгах">✕</button>
           </div>
         </div>
       </div>`).join('');
@@ -290,14 +291,14 @@ function renderHome() {
     return `
       <section class="card">
         <div class="cat-head">
-          <h2>${CATS[cat].icon} ${CATS[cat].label}</h2>
+          <h2>${CATS[cat].label}</h2>
           <span class="cat-count">${list.length}/${N} бүртгэгдсэн · ${list.filter((p) => p.score != null).length} хэмжсэн
             ${revealed[cat] ? ' · <span class="tag-done">ЗАРЛАГДСАН</span>' : ''}</span>
         </div>
         <div class="slots" style="--n:${Math.max(N, list.length)}">${slots}${empties}</div>
         <div class="cat-foot">
           <button class="btn" data-start="${cat}" ${next ? '' : 'disabled'}>▶ ХЭМЖИЛТ ЭХЛҮҮЛЭХ</button>
-          <button class="btn btn-gold" data-reveal="${cat}" ${done ? '' : 'disabled'}>🏆 ЯЛАГЧДЫГ ЗАРЛАХ</button>
+          <button class="btn btn-gold" data-reveal="${cat}" ${done ? '' : 'disabled'}>ЯЛАГЧДЫГ ЗАРЛАХ</button>
         </div>
       </section>`;
   };
@@ -332,7 +333,7 @@ function renderHome() {
 function renderRegister(cat) {
   if (byCat(cat).length >= CFG.perCategory) { renderHome(); return; }
   view = 'register';
-  setFit(false);
+  setFit(true);
   const no = people.reduce((m, p) => Math.max(m, p.no || 0), 0) + 1;
   let filter = 'mugshot';
   let photo = null;          // хадгалах зураг (dataURL)
@@ -342,35 +343,35 @@ function renderRegister(cat) {
   swap(`
     ${header('ФИНАЛИСТ БҮРТГЭЛ')}
     <div class="register">
-      <div>
-        <div class="cam-wrap">
+      <div class="cam-col">
+        <div class="cam-area"><div class="cam-wrap">
           <canvas id="cam" width="${PHOTO_W}" height="${PHOTO_H}"></canvas>
-          <div class="cam-msg" id="cam-msg">📷 Камер асаж байна…</div>
+          <div class="cam-msg" id="cam-msg">Камер асаж байна…</div>
           <div class="cam-count" id="cam-count"></div>
           <div class="cam-flash" id="cam-flash"></div>
-        </div>
+        </div></div>
         <div class="filters" id="filters">
           ${FILTERS.map((f) => `<button class="btn btn-small ${f.key === filter ? 'active' : ''}" data-f="${f.key}">${f.label}</button>`).join('')}
         </div>
       </div>
       <form class="card reg-form" id="reg-form" autocomplete="off">
-        <h2>🗂 СЭЖИГТЭН ${caseNo(no)}</h2>
-        <div class="steps">1) Ангилал, нэрээ бичнэ → 2) Шүүлтүүр сонгоно → 3) 📸 Зураг авна → 4) Хадгална</div>
+        <h2>СЭЖИГТЭН ${caseNo(no)}</h2>
+        <div class="steps">1) Ангилал, нэрээ бичнэ → 2) Шүүлтүүр сонгоно → 3) Зураг авна → 4) Хадгална</div>
         <div>
           <label class="lbl">АНГИЛАЛ</label>
           <div class="seg">
-            ${Object.keys(CATS).map((c) => `<button type="button" class="btn ${c === cat ? 'active' : ''}" data-cat="${c}" ${byCat(c).length >= CFG.perCategory ? 'disabled' : ''}>${CATS[c].icon} ${CATS[c].label}</button>`).join('')}
+            ${Object.keys(CATS).map((c) => `<button type="button" class="btn ${c === cat ? 'active' : ''}" data-cat="${c}" ${byCat(c).length >= CFG.perCategory ? 'disabled' : ''}>${CATS[c].label}</button>`).join('')}
           </div>
         </div>
         <div><label class="lbl" for="r-name">НЭР *</label><input id="r-name" type="text" maxlength="22" placeholder="Жишээ: Бат-Эрдэнэ"></div>
         <div><label class="lbl" for="r-costume">КОСТЮМ / ДҮР (заавал биш)</label><input id="r-costume" type="text" maxlength="30" placeholder="Жишээ: Ганнибал Лектер"></div>
         <div class="btn-row">
-          <button type="button" class="btn btn-primary btn-big" id="snap" disabled>📸 ЗУРАГ АВАХ</button>
+          <button type="button" class="btn btn-primary btn-big" id="snap" disabled>ЗУРАГ АВАХ</button>
           <button type="button" class="btn" id="retake" hidden>↺ ДАХИН АВАХ</button>
         </div>
         <div class="form-msg" id="r-msg"></div>
         <div class="btn-row">
-          <button type="submit" class="btn btn-gold" id="save" disabled>💾 ХАДГАЛАХ</button>
+          <button type="submit" class="btn btn-gold" id="save" disabled>ХАДГАЛАХ</button>
           <button type="button" class="btn" data-nav="home">✕ БОЛИХ</button>
         </div>
       </form>
@@ -405,7 +406,7 @@ function renderRegister(cat) {
       await video.play();
       $('#cam-msg').hidden = true;
     } catch (e) {
-      $('#cam-msg').innerHTML = '⚠ Камер нээгдсэнгүй.<br><span class="small">Хөтчийн хаягийн мөрөн дээрх 🔒/📷 дүрс дээр дарж камерын зөвшөөрөл өгөөд хуудсаа refresh хийнэ үү.</span>';
+      $('#cam-msg').innerHTML = 'Камер нээгдсэнгүй.<br><span class="small">Хөтчийн хаягийн мөрөн дээрх /дүрс дээр дарж камерын зөвшөөрөл өгөөд хуудсаа refresh хийнэ үү.</span>';
     }
     update();
 
@@ -450,16 +451,16 @@ function renderRegister(cat) {
     $('#reg-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const name = nameIn.value.trim();
-      if (!name) { msg.textContent = '✖ Нэрээ бичнэ үү.'; return; }
-      if (!photo) { msg.textContent = '✖ Эхлээд зураг авна уу.'; return; }
-      if (byCat(cat).length >= CFG.perCategory) { msg.textContent = '✖ Энэ ангилал дүүрсэн байна.'; return; }
+      if (!name) { msg.textContent = '✕ Нэрээ бичнэ үү.'; return; }
+      if (!photo) { msg.textContent = '✕ Эхлээд зураг авна уу.'; return; }
+      if (byCat(cat).length >= CFG.perCategory) { msg.textContent = '✕ Энэ ангилал дүүрсэн байна.'; return; }
       people.push({
         id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
         no, name, costume: costIn.value.trim(), cat, photo, score: null, peak: null,
       });
-      if (!savePeople()) { people.pop(); msg.textContent = '✖ Хадгалж чадсангүй (зай дүүрсэн).'; return; }
+      if (!savePeople()) { people.pop(); msg.textContent = '✕ Хадгалж чадсангүй (зай дүүрсэн).'; return; }
       sfx.result();
-      flash('🗂 ' + caseNo(no) + ' БҮРТГЭГДЛЭЭ', 1100);
+      flash('' + caseNo(no) + ' БҮРТГЭГДЛЭЭ', 1100);
       renderHome();
     });
   });
@@ -631,14 +632,14 @@ function renderStage(id, remeasure = false) {
   swap(`
     <div class="stage-head">
       <span class="case-no">ХЭРГИЙН ДУГААР ${caseNo(p.no)}</span>
-      <span class="cat-pill">${CATS[p.cat].icon} ${CATS[p.cat].label} · ${idx}/${list.length}</span>
+      <span class="cat-pill">${CATS[p.cat].label} · ${idx}/${list.length}</span>
     </div>
     <div class="stage-grid">
       <div class="suspect">
         <div class="evidence-tag">НОТЛОХ БАРИМТ #${String(p.no).padStart(2, '0')}</div>
         <div class="photo-box"><img class="suspect-photo" src="${p.photo}" alt=""></div>
         <div class="suspect-name">${esc(p.name)}</div>
-        ${p.costume ? `<div class="suspect-costume">🎭 ${esc(p.costume)}</div>` : ''}
+        ${p.costume ? `<div class="suspect-costume">${esc(p.costume)}</div>` : ''}
       </div>
       <div class="card meter-panel">
         ${meterHTML()}
@@ -676,7 +677,7 @@ function drawStageUI() {
 
   if (!mic.ready) {
     status.textContent = mic.error || 'Микрофон идэвхгүй байна.';
-    acts.innerHTML = `<button class="btn btn-primary btn-big" id="act-mic">🎤 МИК ИДЭВХЖҮҮЛЭХ</button>${homeBtn}`;
+    acts.innerHTML = `<button class="btn btn-primary btn-big" id="act-mic">МИК ИДЭВХЖҮҮЛЭХ</button>${homeBtn}`;
     res.innerHTML = '';
   } else if (measure.phase === 'idle') {
     status.textContent = 'Танхимын одоогийн түвшин. Бэлэн үү?';
@@ -686,12 +687,12 @@ function drawStageUI() {
     status.textContent = '';
     res.innerHTML = `
       <div class="result">
-        <div class="result-score">🏁 ОНОО: <b>${p.score.toFixed(1)} dB</b></div>
+        <div class="result-score">ОНОО: <b>${p.score.toFixed(1)} dB</b></div>
         <div class="result-sub">Оргил цэг: ${(p.peak ?? p.score).toFixed(1)} dB · ${CFG.measureSec} сек хэмжилт</div>
       </div>`;
     acts.innerHTML = `
       ${nextP ? '<button class="btn btn-primary btn-big" id="act-next">ДАРААГИЙН ОРОЛЦОГЧ ▶ (ENTER)</button>'
-        : (allMeasured(p.cat) ? '<button class="btn btn-gold btn-big" id="act-next">🏆 ЯЛАГЧДЫГ ЗАРЛАХ (ENTER)</button>' : '')}
+        : (allMeasured(p.cat) ? '<button class="btn btn-gold btn-big" id="act-next">ЯЛАГЧДЫГ ЗАРЛАХ (ENTER)</button>' : '')}
       <button class="btn lock" id="act-redo">↺ ДАХИН ХЭМЖИХ</button>
       ${homeBtn}`;
   } else {
@@ -727,12 +728,12 @@ async function startMeasure() {
     await wait(1000);
   }
   if (!measure || measure.id !== id) { ov.remove(); return; }
-  ov.innerHTML = '<span class="go">👏 АЛГА ТАШ!</span>';
+  ov.innerHTML = '<span class="go">АЛГА ТАШ!</span>';
   await wait(350);                       // дохионы дуу бүрэн унтрахыг хүлээнэ
   if (!measure || measure.id !== id) { ov.remove(); return; }
   setTimeout(() => ov.remove(), 700);
   Object.assign(measure, { phase: 'measuring', start: performance.now(), lastT: 0, dbSum: 0, dur: 0, peak: -Infinity });
-  $('#m-status').textContent = '🔴 ХЭМЖИЖ БАЙНА… (чимээгүй горим)';
+  $('#m-status').textContent = '● ХЭМЖИЖ БАЙНА… (чимээгүй горим)';
   $('#m-bar').classList.add('on');
 }
 
@@ -802,7 +803,7 @@ function loop(ts) {
    ================================================================ */
 function renderReveal(cat, instant = false) {
   view = 'reveal';
-  setFit(false);
+  setFit(true);
   const list = ranked(cat);
   const top = list.slice(0, 3);
   const order = top.map((_, i) => i).reverse();       // 3-р → 2-р → 1-р
@@ -820,7 +821,7 @@ function renderReveal(cat, instant = false) {
         </div></div>
         <div class="pod-info">
           <div class="pod-name">${esc(p.name)}</div>
-          ${p.costume ? `<div class="pod-costume">🎭 ${esc(p.costume)}</div>` : ''}
+          ${p.costume ? `<div class="pod-costume">${esc(p.costume)}</div>` : ''}
           <div class="pod-score">${p.score.toFixed(1)} dB</div>
         </div>
         <div class="pod-base">${p._place}</div>
@@ -834,7 +835,7 @@ function renderReveal(cat, instant = false) {
   swap(`
     <div class="reveal-title">
       <div class="sub">EMPASOFT PD · ШИЙДВЭР ГАРЛАА</div>
-      <h1>🏆 ${CATS[cat].label} — ЯЛАГЧИД</h1>
+      <h1>${CATS[cat].label} — ЯЛАГЧИД</h1>
     </div>
     <div class="suspense" id="suspense"></div>
     <div class="podium">${visual.map(podHTML).join('')}</div>
@@ -844,15 +845,15 @@ function renderReveal(cat, instant = false) {
       const a = $('#rv-actions');
       if (step < top.length) {
         const place = top[order[step]]._place;
-        a.innerHTML = `<button class="btn btn-gold btn-big" id="rv-next">🥁 ${place}-Р БАЙРЫГ ЗАРЛАХ (SPACE)</button>`;
+        a.innerHTML = `<button class="btn btn-gold btn-big" id="rv-next">${place}-Р БАЙРЫГ ЗАРЛАХ (SPACE)</button>`;
         $('#rv-next').addEventListener('click', next);
       } else {
         a.innerHTML = `
-          ${!revealed[other] && allMeasured(other) ? `<button class="btn btn-gold" id="rv-other">🏆 ${CATS[other].label} АНГИЛАЛ ЗАРЛАХ</button>` : ''}
+          ${!revealed[other] && allMeasured(other) ? `<button class="btn btn-gold" id="rv-other">${CATS[other].label} АНГИЛАЛ ЗАРЛАХ</button>` : ''}
           ${!revealed[other] && !allMeasured(other) && byCat(other).length ? `<button class="btn btn-primary" id="rv-measure">▶ ${CATS[other].label} ХЭМЖИЛТ</button>` : ''}
           <button class="btn" id="rv-replay">↺ ДАХИН ЗАРЛАХ</button>
-          <button class="btn" data-nav="board">🏆 ТЭРГҮҮЛЭГЧИД</button>
-          <button class="btn" data-nav="home">🏠 НҮҮР</button>`;
+          <button class="btn" data-nav="board">ТЭРГҮҮЛЭГЧИД</button>
+          <button class="btn" data-nav="home">НҮҮР</button>`;
         bindNav();
         $('#rv-other')?.addEventListener('click', () => renderReveal(other));
         $('#rv-measure')?.addEventListener('click', () => { const p = byCat(other).find((x) => x.score == null); if (p) renderStage(p.id); });
@@ -866,14 +867,14 @@ function renderReveal(cat, instant = false) {
       const i = order[step], p = top[i], first = i === 0;
       $('#rv-next').disabled = true;
       const sus = $('#suspense');
-      sus.textContent = `🥁 ${p._place}-Р БАЙР…`;
+      sus.textContent = `${p._place}-Р БАЙР…`;
       sus.classList.add('drum');
       sfx.drumroll(first ? 2.6 : 1.6);
       await wait(first ? 2700 : 1700);
       sus.classList.remove('drum');
       $('#pod-' + i).classList.add('shown');
       sus.textContent = `${medal(p._place)} ${p.name}`;
-      if (first) { sfx.fanfare(); flash('🏆 1-Р БАЙР: ' + p.name.toUpperCase(), 1600); setTimeout(rainParticles, 600); }
+      if (first) { sfx.fanfare(); flash('1-Р БАЙР: ' + p.name.toUpperCase(), 1600); setTimeout(rainParticles, 600); }
       else sfx.sting();
       step++;
       if (step >= top.length) { revealed[cat] = true; saveRevealed(); $('#rest').innerHTML = restHTML(); }
@@ -894,25 +895,25 @@ function renderReveal(cat, instant = false) {
    ================================================================ */
 function renderBoard() {
   view = 'board';
-  setFit(false);
+  setFit(true);
   const col = (cat) => {
     const list = ranked(cat);
     let body;
-    if (!revealed[cat]) body = `<div class="locked">🔒 Хараахан зарлагдаагүй<br><span class="small">${list.length}/${byCat(cat).length} хэмжсэн</span></div>`;
-    else body = `<ol class="board-list">${list.map((p, k) => `
+    if (!revealed[cat]) body = `<div class="locked">Хараахан зарлагдаагүй<br><span class="small">${list.length}/${byCat(cat).length} хэмжсэн</span></div>`;
+    else body = `<ol class="board-list" style="--n:${list.length}">${list.map((p, k) => `
       <li class="${p._place <= 3 ? 'r' + p._place : ''}" style="animation-delay:${k * 0.06}s">
         <span class="place">${medal(p._place)}</span><img src="${p.photo}" alt="">
         <span class="bname">${esc(p.name)}<small>${esc(p.costume || '')}</small></span>
         <span class="bscore">${p.score.toFixed(1)} dB</span>
       </li>`).join('')}</ol>`;
-    return `<section class="card"><div class="cat-head"><h2>${CATS[cat].icon} ${CATS[cat].label}</h2></div>${body}</section>`;
+    return `<section class="card"><div class="cat-head"><h2>${CATS[cat].label}</h2></div>${body}</section>`;
   };
   swap(`${header('ТЭРГҮҮЛЭГЧИД · ХАМГИЙН ЧАНГА АЛГА ТАШИЛТ')}<div class="board-cats">${col('m')}${col('f')}</div>`, bindNav);
 }
 
 /* ================================================================
    12. ЗОХИОН БАЙГУУЛАГЧ — PIN, тохиргоо
-   🔒 Хамгаалалт: устгах, дахин хэмжих, тохиргоо → PIN шаардана.
+   Хамгаалалт: устгах, дахин хэмжих, тохиргоо → PIN шаардана.
       PIN-ийг нэг удаа зөв оруулбал хуудсыг refresh хийх хүртэл
       дахин асуухгүй (adminUnlocked).
    ================================================================ */
@@ -924,7 +925,7 @@ function closeModal() { modal.hidden = true; mpanel.innerHTML = ''; }
 function requireAdmin(cb) {
   if (adminUnlocked) { cb(); return; }
   openModal(`
-    <div class="modal-head"><h2>🔒 ЗОХИОН БАЙГУУЛАГЧИЙН PIN</h2><button class="btn btn-small" id="m-x">✕</button></div>
+    <div class="modal-head"><h2>ЗОХИОН БАЙГУУЛАГЧИЙН PIN</h2><button class="btn btn-small" id="m-x">✕</button></div>
     <form id="pin-form" autocomplete="off">
       <input id="pin-in" type="password" inputmode="numeric" placeholder="PIN">
       <div class="btn-row" style="margin-top:0.8rem"><button class="btn btn-primary">НЭЭХ</button></div>
@@ -935,13 +936,13 @@ function requireAdmin(cb) {
   $('#pin-form').addEventListener('submit', (e) => {
     e.preventDefault();
     if ($('#pin-in').value === String(CFG.pin)) { adminUnlocked = true; closeModal(); cb(); }
-    else { $('#pin-msg').textContent = '✖ PIN буруу байна.'; }
+    else { $('#pin-msg').textContent = '✕ PIN буруу байна.'; }
   });
 }
 
 function confirmModal(title, text, onYes) {
   openModal(`
-    <div class="modal-head"><h2>⚠ ${esc(title)}</h2></div>
+    <div class="modal-head"><h2>${esc(title)}</h2></div>
     <p class="muted">${esc(text)}</p>
     <div class="btn-row"><button class="btn btn-danger" id="c-yes">ТИЙМ</button><button class="btn" id="c-no">ҮГҮЙ</button></div>`);
   $('#c-no').addEventListener('click', closeModal);
@@ -951,10 +952,10 @@ function confirmModal(title, text, onYes) {
 function openSettings() {
   requireAdmin(() => {
     openModal(`
-      <div class="modal-head"><h2>⚙ ТОХИРГОО</h2><button class="btn btn-small" id="m-x">✕ ХААХ</button></div>
+      <div class="modal-head"><h2>ТОХИРГОО</h2><button class="btn btn-small" id="m-x">✕ ХААХ</button></div>
       <div class="sec" style="border:0;margin:0;padding:0">
-        <h3>🎤 МИК ШАЛГАХ, МЭДРЭМЖ</h3>
-        ${mic.ready ? '' : '<button class="btn btn-primary" id="s-mic">🎤 МИК ИДЭВХЖҮҮЛЭХ</button>'}
+        <h3>МИК ШАЛГАХ, МЭДРЭМЖ</h3>
+        ${mic.ready ? '' : '<button class="btn btn-primary" id="s-mic">МИК ИДЭВХЖҮҮЛЭХ</button>'}
         <div class="cal-meter"><i id="cal-fill"></i></div>
         <div class="cal-row"><span>Одоогийн түвшин</span><b id="cal-db">--</b></div>
         <label class="lbl" for="s-cal" style="margin-top:0.6rem">МЭДРЭМЖ: <b id="s-cal-v" class="hl">${CFG.calib > 0 ? '+' : ''}${CFG.calib}</b> dB</label>
@@ -962,18 +963,18 @@ function openSettings() {
         <div class="help">Танхим чимээгүй үед ~40–50, хүчтэй алга ташилтад ~95–110 гарахаар тааруулбал тохиромжтой. Хэмжилт эхэлсний дараа БҮҮ өөрчил (шударга бус болно).</div>
       </div>
       <div class="sec">
-        <h3>⏱ ХЭМЖИЛТ</h3>
+        <h3>ХЭМЖИЛТ</h3>
         <div class="grid2">
           <div><label class="lbl" for="s-n">ФИНАЛИСТ / АНГИЛАЛ</label><input id="s-n" type="number" min="1" max="10" value="${CFG.perCategory}"></div>
           <div><label class="lbl" for="s-cd">ТООЛОХ (сек)</label><input id="s-cd" type="number" min="1" max="10" value="${CFG.countdownSec}"></div>
           <div><label class="lbl" for="s-ms">ХЭМЖИХ (сек)</label><input id="s-ms" type="number" min="2" max="15" value="${CFG.measureSec}"></div>
         </div>
         <div style="margin-top:0.8rem"><label class="lbl" for="s-pin">PIN</label><input id="s-pin" type="text" value="${esc(CFG.pin)}"></div>
-        <div class="btn-row" style="margin-top:0.8rem"><button class="btn btn-primary" id="s-save">💾 ХАДГАЛАХ</button></div>
+        <div class="btn-row" style="margin-top:0.8rem"><button class="btn btn-primary" id="s-save">ХАДГАЛАХ</button></div>
         <div class="msg" id="s-msg"></div>
       </div>
       <div class="sec">
-        <h3>🗑 АРИЛГАХ</h3>
+        <h3>АРИЛГАХ</h3>
         <div class="btn-row">
           <button class="btn btn-danger" id="s-scores">Бүх оноог арилгах</button>
           <button class="btn btn-danger" id="s-all">БҮГДИЙГ УСТГАХ (нэр, зураг, оноо)</button>
@@ -991,12 +992,12 @@ function openSettings() {
     $('#s-save').addEventListener('click', () => {
       const n = Number($('#s-n').value), cd = Number($('#s-cd').value), ms = Number($('#s-ms').value), pin = $('#s-pin').value.trim();
       if (!(n >= 1 && n <= 10) || !(cd >= 1 && cd <= 10) || !(ms >= 2 && ms <= 15) || !pin) {
-        msg.className = 'msg err'; msg.textContent = '✖ Утгуудаа шалгана уу (финалист 1–10, тоолох 1–10, хэмжих 2–15, PIN хоосон биш).';
+        msg.className = 'msg err'; msg.textContent = '✕ Утгуудаа шалгана уу (финалист 1–10, тоолох 1–10, хэмжих 2–15, PIN хоосон биш).';
         return;
       }
       Object.assign(CFG, { perCategory: n, countdownSec: cd, measureSec: ms, pin });
       saveCfg();
-      msg.className = 'msg ok'; msg.textContent = '✔ Хадгалагдлаа.';
+      msg.className = 'msg ok'; msg.textContent = '✓ Хадгалагдлаа.';
       if (view === 'home') renderHome();
     });
     $('#s-scores').addEventListener('click', () => confirmModal('Бүх оноог арилгах уу?', 'Оролцогчид үлдэнэ, зөвхөн оноо болон зарлалт арилна.', () => {
@@ -1045,7 +1046,7 @@ function init() {
   startRain();
   requestAnimationFrame(loop);
 
-  // Нууц тохиргоо нээх: 💀 дээр 5 удаа · Ctrl+Alt+A
+  // Нууц тохиргоо нээх: зүүн доод буланд ◆ дээр 5 удаа · Ctrl+Alt+A
   let taps = 0, tapT;
   $('#admin-trigger').addEventListener('click', () => {
     taps++; clearTimeout(tapT); tapT = setTimeout(() => { taps = 0; }, 2500);
@@ -1058,8 +1059,8 @@ function init() {
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
   const st = $('#sound-toggle');
-  st.textContent = sfx.on ? '🔊' : '🔇';
-  st.addEventListener('click', () => { st.textContent = sfx.toggle() ? '🔊' : '🔇'; });
+  st.textContent = sfx.on ? 'ДУУ: ON' : 'ДУУ: OFF';
+  st.addEventListener('click', () => { st.textContent = sfx.toggle() ? 'ДУУ: ON' : 'ДУУ: OFF'; });
 
   // Хуудас нээгдсэнээс хойш анхны товшилтоор дууны систем асна (хөтчийн дүрэм)
   document.addEventListener('pointerdown', () => { try { getCtx(); } catch (e) { /* алгасна */ } }, { once: true });
