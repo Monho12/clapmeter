@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CLAP METER // EmpaSoft · Night of the Bugs</title>
+  <meta name="description" content="EmpaSoft Night of the Bugs — костюмын шагналын алга ташилтын метр.">
+  <meta name="theme-color" content="#060708">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👏</text></svg>">
+
+  <!-- Фонт: JetBrains Mono, Rubik Wet Paint нь кирилл (Ө, Ү) үсэгтэй. Интернетгүй үед monospace руу шилжинэ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=JetBrains+Mono:wght@400;700&family=Rubik+Wet+Paint&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Арын binary бороо (чимэглэл) -->
+  <canvas id="bg-rain" aria-hidden="true"></canvas>
+  <!-- CRT scanline эффект -->
+  <div class="crt-overlay" aria-hidden="true"></div>
+
+  <!-- Гэмт хэргийн газрын тууз -->
+  <div class="tape" aria-hidden="true">
+    <div class="tape-track">
+      <span>ХЭРГИЙН ГАЗАР · CRIME SCENE · БҮҮ НЭВТЭР · EMPASOFT PD · DO NOT CROSS · </span>
+      <span>ХЭРГИЙН ГАЗАР · CRIME SCENE · БҮҮ НЭВТЭР · EMPASOFT PD · DO NOT CROSS · </span>
+    </div>
+  </div>
+
+  <!-- Үндсэн дэлгэц (JS энд зурна) -->
+  <main id="app" class="app"></main>
+
+  <footer class="footer">
+    <button type="button" id="admin-trigger" class="admin-trigger" aria-label="Зохион байгуулагч">💀</button>
+    <span class="footer-text">EMPASOFT PD // NIGHT OF THE BUGS // CLAP METER — бүх өгөгдөл зөвхөн энэ компьютер дээр хадгалагдана</span>
+    <button type="button" id="sound-toggle" class="sound-toggle" aria-label="Дуу асаах/унтраах">🔊</button>
+  </footer>
+
+  <!-- Бүтэн дэлгэцийн анивчилт -->
+  <div id="flash" class="flash" hidden></div>
+  <!-- Ялалтын хулуу/сүнсний бороо -->
+  <div id="particles" class="particles" aria-hidden="true"></div>
+
+  <!-- Зохион байгуулагчийн цонх (PIN, тохиргоо) -->
+  <div id="modal" class="modal" hidden role="dialog" aria-modal="true">
+    <div class="modal-panel" id="modal-panel"></div>
+  </div>
+
+  <script defer src="script.js"></script>
+</body>
+</html>
