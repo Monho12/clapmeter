@@ -487,3 +487,10 @@ label.lbl { display: block; font-size: 0.75rem; color: var(--muted); letter-spac
   body.fit .reg-form .form-msg:empty { display: none; }
   body.fit .seg .btn { min-height: 2.4rem; padding: 0.4rem 0.6rem; }
 }
+
+/* ---------- 19. Scrollbar нуух ----------
+   Бүх scrollbar-ыг харагдахгүй болгоно (шаардлагатай үед хулганы дугуйгаар гүйлгэх боломж хэвээр).
+   Формын хэвтээ гүйлгэлтийг бүрмөсөн хаана — картын булангийн чимэглэл 1px гадагш гардгаас үүсдэг байсан. */
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+body.fit .reg-form { overflow-x: hidden; }
