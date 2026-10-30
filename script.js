@@ -208,6 +208,9 @@ function swap(html, after) {
   }, 180);
 }
 
+// Нүүр, тайзны дэлгэцийг яг нэг дэлгэцэнд багтаана (scroll-гүй)
+const setFit = (on) => document.body.classList.toggle('fit', on);
+
 function flash(text, ms = 1400) {
   const el = $('#flash');
   el.textContent = text;
@@ -258,6 +261,7 @@ function bindNav() {
    ================================================================ */
 function renderHome() {
   view = 'home';
+  setFit(true);
   const col = (cat) => {
     const list = byCat(cat);
     const N = CFG.perCategory;
@@ -290,7 +294,7 @@ function renderHome() {
           <span class="cat-count">${list.length}/${N} бүртгэгдсэн · ${list.filter((p) => p.score != null).length} хэмжсэн
             ${revealed[cat] ? ' · <span class="tag-done">ЗАРЛАГДСАН</span>' : ''}</span>
         </div>
-        <div class="slots">${slots}${empties}</div>
+        <div class="slots" style="--n:${Math.max(N, list.length)}">${slots}${empties}</div>
         <div class="cat-foot">
           <button class="btn" data-start="${cat}" ${next ? '' : 'disabled'}>▶ ХЭМЖИЛТ ЭХЛҮҮЛЭХ</button>
           <button class="btn btn-gold" data-reveal="${cat}" ${done ? '' : 'disabled'}>🏆 ЯЛАГЧДЫГ ЗАРЛАХ</button>
@@ -328,6 +332,7 @@ function renderHome() {
 function renderRegister(cat) {
   if (byCat(cat).length >= CFG.perCategory) { renderHome(); return; }
   view = 'register';
+  setFit(false);
   const no = people.reduce((m, p) => Math.max(m, p.no || 0), 0) + 1;
   let filter = 'mugshot';
   let photo = null;          // хадгалах зураг (dataURL)
@@ -618,6 +623,7 @@ function renderStage(id, remeasure = false) {
   const p = people.find((x) => x.id === id);
   if (!p) { renderHome(); return; }
   view = 'stage';
+  setFit(true);
   const list = byCat(p.cat);
   const idx = list.indexOf(p) + 1;
   measure = { id, phase: p.score != null && !remeasure ? 'done' : 'idle', start: 0, lastT: 0, dbSum: 0, dur: 0, peak: -Infinity };
@@ -630,7 +636,7 @@ function renderStage(id, remeasure = false) {
     <div class="stage-grid">
       <div class="suspect">
         <div class="evidence-tag">НОТЛОХ БАРИМТ #${String(p.no).padStart(2, '0')}</div>
-        <img class="suspect-photo" src="${p.photo}" alt="">
+        <div class="photo-box"><img class="suspect-photo" src="${p.photo}" alt=""></div>
         <div class="suspect-name">${esc(p.name)}</div>
         ${p.costume ? `<div class="suspect-costume">🎭 ${esc(p.costume)}</div>` : ''}
       </div>
@@ -796,6 +802,7 @@ function loop(ts) {
    ================================================================ */
 function renderReveal(cat, instant = false) {
   view = 'reveal';
+  setFit(false);
   const list = ranked(cat);
   const top = list.slice(0, 3);
   const order = top.map((_, i) => i).reverse();       // 3-р → 2-р → 1-р
@@ -887,6 +894,7 @@ function renderReveal(cat, instant = false) {
    ================================================================ */
 function renderBoard() {
   view = 'board';
+  setFit(false);
   const col = (cat) => {
     const list = ranked(cat);
     let body;

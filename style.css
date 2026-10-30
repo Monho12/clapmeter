@@ -31,7 +31,8 @@
 }
 
 /* Дэлгэцийн өргөнөөс хамаарч бүх зүйл томорно: 1366px ≈ 18px, 1920px ≈ 23px */
-html { font-size: clamp(14px, 0.9vw + 6px, 26px); -webkit-text-size-adjust: 100%; }
+/* Өргөн болон өндрийн аль багаас нь хамаарч томорно (намхан дэлгэцэнд хэтэрхий томрохгүй) */
+html { font-size: clamp(14px, min(0.9vw + 6px, 1.9vh + 4px), 26px); -webkit-text-size-adjust: 100%; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 
@@ -397,4 +398,43 @@ label.lbl { display: block; font-size: 0.75rem; color: var(--muted); letter-spac
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* ---------- 16. Scroll-гүй дэлгэц: нүүр, тайз (body.fit) ----------
+   Хуудас яг дэлгэцийн өндөрт багтаж, агуулга нь өөрөө жижгэрнэ. */
+@media (min-width: 901px) {
+  body.fit { height: 100vh; height: 100dvh; overflow: hidden; }
+  body.fit .app { min-height: 0; display: flex; flex-direction: column; padding-top: 0.8rem; padding-bottom: 0.8rem; }
+  body.fit .head { flex: none; margin-bottom: 0.8rem; }
+
+  /* Нүүр — финалистын жагсаалт */
+  body.fit .cats { flex: 1; min-height: 0; }
+  body.fit .cats > .card { display: flex; flex-direction: column; min-height: 0; padding: 0.9rem 1rem; }
+  body.fit .cat-head { flex: none; margin-bottom: 0.6rem; }
+  body.fit .slots { flex: 1; min-height: 0; grid-template-rows: repeat(var(--n, 3), minmax(0, 1fr)); }
+  body.fit .slot { min-height: 0; overflow: hidden; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr); padding: 0.4rem 0.5rem; }
+  body.fit .slot img { height: 100%; max-height: 7.5rem; width: auto; aspect-ratio: 3 / 4; }
+  body.fit .slot.empty { min-height: 0; }
+  body.fit .cat-foot { flex: none; margin-top: 0.7rem; }
+
+  /* Тайз — хэмжилт */
+  body.fit .stage-head { flex: none; margin-bottom: 0.6rem; }
+  body.fit .stage-grid { flex: 1; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+  body.fit .suspect { display: flex; flex-direction: column; align-items: center; min-height: 0; }
+  body.fit .photo-box { position: relative; flex: 1; min-height: 0; width: 100%; }
+  body.fit .suspect-photo {
+    position: absolute; top: 0; left: 50%; height: 100%; width: auto; max-width: 100%;
+    aspect-ratio: 3 / 4; margin: 0; transform: translateX(-50%) rotate(-1deg);
+  }
+  body.fit .suspect-name { flex: none; font-size: clamp(1.1rem, 4vh, 1.7rem); }
+  body.fit .suspect-costume { flex: none; }
+  body.fit .meter-panel { height: auto; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+  body.fit .meter { min-height: 0; }
+  body.fit .readout { min-height: 0; overflow: hidden; }
+  body.fit .db-big { font-size: clamp(3rem, 14vh, 9rem); }
+  body.fit .level-name { font-size: clamp(1rem, 3vh, 1.5rem); }
+  body.fit .stage-status { margin-top: 0.5rem; font-size: clamp(0.8rem, 2.2vh, 1.05rem); }
+  body.fit .result { padding: 0.5rem 0.8rem; }
+  body.fit .result-score { font-size: clamp(1.1rem, 3.2vh, 1.8rem); }
+  body.fit .stage-actions { flex: none; margin-top: 0.7rem; }
 }
